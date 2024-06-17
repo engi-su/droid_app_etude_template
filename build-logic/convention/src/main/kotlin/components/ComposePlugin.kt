@@ -28,7 +28,7 @@ class ComposePlugin: Plugin<Project> {
             }
         }
     }
-    private fun Project.configureAndroidCompose(ext: CommonExtension<*, *, *, *, *, *>,) {
+    private fun Project.configureAndroidCompose(ext: CommonExtension<*, *, *, *, *, *>) {
         ext.apply {
             buildFeatures {
                 compose = true
@@ -49,8 +49,12 @@ class ComposePlugin: Plugin<Project> {
             add("implementation", platform(bom))
             add("androidTestImplementation", platform(bom))
             // Android Studio Preview support
-            add("implementation", libs.findLibrary("ui-tooling-preview").get())
             add("debugImplementation", libs.findLibrary("ui-tooling").get())
+            add("implementation", libs.findBundle("ui").get())
+            add("implementation", libs.findLibrary("activity-compose").get())
+            add("implementation", libs.findBundle("material").get())
+            add("implementation", libs.findLibrary("foundation").get())
+            add("implementation", libs.findBundle("lifecycle").get())
 
             /*
             probably that is done in particular build.gradle.kts
@@ -88,17 +92,11 @@ class ComposePlugin: Plugin<Project> {
         }
         tasks.withType<KotlinCompile>().configureEach {
             kotlinOptions {
-                freeCompilerArgs += buildComposeMetricsParameters()
                 freeCompilerArgs += stabilityConfiguration()
             }
         }
     }
 
-
-    // ToDo PS-81
-    private fun Project.buildComposeMetricsParameters(): List<String> {
-        return emptyList()
-    }
 
     // ToDo PS-82
     private fun Project.stabilityConfiguration() = listOf(
